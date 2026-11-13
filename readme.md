@@ -1,54 +1,61 @@
-# Google Drive Mass Synchronized Downloader 🚀
+# Descarga masiva de Google Drive sincronizada con Excel
 
-Este script de automatización en Python está diseñado para resolver de manera definitiva los problemas de descarga masiva desde Google Drive en entornos corporativos restrictivos. 
+Script en Python que descarga de forma masiva los archivos enlazados en una hoja de Excel (links de Google Drive) y deja un reporte donde **cada fila coincide con su archivo descargado**. Está pensado para entornos corporativos restrictivos, donde los tokens y las APIs de Drive no están disponibles.
 
-A diferencia de los scripts tradicionales que fallan por tokens expirados o cambios en el código de la interfaz de Google, esta herramienta toma el control de una sesión activa de Chrome (`Remote Debugging`) y utiliza un **mecanismo de bloqueo por hardware de precisión** para asegurar una alineación matemática perfecta (1:1) entre los registros de un archivo Excel y los archivos físicos descargados en disco.
+En lugar de usar la API, toma el control de una sesión de Chrome ya abierta (*Remote Debugging*) y hereda el inicio de sesión y las cookies de la empresa.
 
-## ✨ Características Principales
-* **Sincronización Perfecta:** El script congela su ejecución por completo por cada fila procesada y monitorea en tiempo real el disco duro de la computadora. No avanza a la siguiente fila hasta que el archivo actual termine de descargarse (rastreo de extensiones `.crdownload`).
-* **Protección del Archivo Base:** El archivo Excel original se lee en modo de solo lectura. El script genera un informe totalmente nuevo desde cero.
-* **Manejo Visual de Errores:** Utilizando `openpyxl`, el script analiza el resultado final y pinta automáticamente de **color rojo** las filas cuyos enlaces presenten fallos o tiempos de espera agotados.
-* **Bypass de Firewalls Corporativos:** Al conectarse a una ventana remota del navegador real de la compañía, hereda de forma automática el inicio de sesión, credenciales y cookies activas de la empresa.
+## Qué resuelve
 
-## 🛠️ Requisitos e Instalación
+- **Alineación 1:1 entre Excel y disco.** Procesa una fila a la vez y no avanza hasta que el archivo termina de descargarse (detecta la extensión temporal `.crdownload` de Chrome).
+- **No modifica el original.** Lee el Excel en solo lectura y genera un reporte nuevo.
+- **Errores visibles.** Con `openpyxl` pinta de rojo las filas con enlace vacío, fallo o tiempo de espera agotado.
+- **Funciona detrás del firewall corporativo**, porque usa el navegador real ya autenticado.
 
-1. **Python 3.10+** instalado en el equipo.
-2. Instalar las dependencias necesarias mediante la consola de comandos:
+## Tecnologías
+
+`Python 3.10+` · `pandas` · `Selenium` · `openpyxl`
+
+## Instalación
+
 ```bash
-pip install pandas selenium openpyxl webdriver-manager
+pip install pandas selenium openpyxl
+```
 
+## Uso
 
-## 🚀 Guía de Uso Step-by-Step
-Paso 1: Inicializar Chrome en Modo Remoto
-Para que Python pueda tomar el control de tu sesión activa sin requerir logueos extras y evadiendo políticas rígidas de seguridad, cierra todas tus ventanas corrientes de Google Chrome, abre el Símbolo del sistema (cmd) de Windows y ejecuta:
+**1. Abre Chrome en modo remoto.** Cierra todas las ventanas de Chrome y, desde el Símbolo del sistema de Windows, ejecuta:
 
+```bat
 "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\SeleniumChromeProfile"
+```
 
-Nota: Deja abierta esta ventana del navegador e inicia sesión en tu Google Drive corporativo.
+Deja esa ventana abierta e inicia sesión en tu Google Drive.
 
-Paso 2: Configurar las Rutas en el Script
+**2. Configura las rutas** al inicio de `archivos.py`:
 
-Abre el script downloader.py y ajusta las siguientes variables a tus rutas deseadas:
-ruta_excel_original: Ruta del listado con links de Drive.
-ruta_excel_nuevo_reporte: Destino del nuevo reporte limpio a generar.
-carpeta_destino_descargas: Carpeta local donde se acumularán las descargas físicas.
-nombre_hoja: Nombre exacto de la pestaña del Excel a procesar.
+| Variable | Qué es |
+| :-- | :-- |
+| `ruta_excel_original` | Excel con el listado de links de Drive |
+| `ruta_excel_nuevo_reporte` | Dónde se guardará el reporte generado |
+| `carpeta_destino_descargas` | Carpeta local donde se acumulan las descargas |
+| `nombre_hoja` | Nombre exacto de la pestaña a procesar |
 
+**3. Ejecuta:**
 
-Paso 3: Ejecutar la Automatización
-Corre el script desde tu entorno de desarrollo o consola:
+```bash
+python archivos.py
+```
 
-Bash
-python downloader.py
+## Formato del reporte
 
+El script genera un Excel independiente con cinco columnas:
 
-📊 Formato de Salida
-El script genera un archivo Excel independiente con una estructura unificada de 5 columnas:
+| Columna | Origen |
+| :-- | :-- |
+| Cliente | Columna B del original |
+| Asignado | Columna J del original |
+| Link Drive | Columna N del original |
+| ID Validación / Ticket | Columna O del original |
+| Nombre Archivo / Estado | Columna nueva de control |
 
-Cliente (Extraído de Columna B original)
-Asignado (Extraído de Columna J original)
-Link Drive (Extraído de Columna N original)
-ID Validación / Ticket (Extraído de Columna O original)
-Nombre Archivo / Status (Nueva Columna P de control)
-
-Cualquier fila que presente un enlace vacío o una descarga fallida se resaltará automáticamente en color rojo.
+Las filas con enlace vacío o descarga fallida se resaltan en rojo.

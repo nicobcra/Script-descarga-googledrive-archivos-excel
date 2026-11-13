@@ -8,10 +8,10 @@ from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
 # --- CONFIGURACIÓN DE RUTAS ---
-ruta_excel_original = r"C:\Users\nicolas.becerra\Downloads\Atenea_Fz\cHARGUE LEVANTAMIENTOS.xlsx"
-ruta_excel_nuevo_reporte = r"C:\Users\nicolas.becerra\Downloads\Atenea_Fz\REPORTE_DESCARGAS_FINAL.xlsx"
-carpeta_destino_descargas = r"C:\Users\nicolas.becerra\Downloads\Atenea_Fz\Archivos Cargue"
-nombre_hoja = "CargueFinal"
+ruta_excel_original = r"C:\ruta\al\listado.xlsx"
+ruta_excel_nuevo_reporte = r"C:\ruta\al\reporte_descargas.xlsx"
+carpeta_destino_descargas = r"C:\ruta\a\carpeta_de_descargas"
+nombre_hoja = "Hoja1"
 
 if not os.path.exists(carpeta_destino_descargas):
     os.makedirs(carpeta_destino_descargas)
